@@ -13,6 +13,7 @@ class AvocadoFeatures(BaseModel):
     hue: int
     saturation: int
     brightness: int
+    color_category: str
     sound_db: int
     weight_g: int
     size_cm3: int
@@ -20,6 +21,7 @@ class AvocadoFeatures(BaseModel):
 
 @avocado_app.post('/predict')
 async def predict_avocado(avocado: AvocadoFeatures):
+    color_map = {'green': 0, 'red': 1, 'yellow': 2}
 
     features = [
         avocado.firmness,
@@ -29,6 +31,10 @@ async def predict_avocado(avocado: AvocadoFeatures):
         avocado.sound_db,
         avocado.weight_g,
         avocado.size_cm3,
+        1 if avocado.color_category == 'black' else 0,
+        1 if avocado.color_category == 'dark green' else 0,
+        1 if avocado.color_category == 'green' else 0,
+        1 if avocado.color_category == 'purple' else 0,
     ]
 
     scaled = scaler.transform([features])
